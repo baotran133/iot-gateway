@@ -34,6 +34,13 @@ def connected(client, usedata, flags, rc):
     else:
         print("Connection is failed")
 
+def getLocation():
+    # retrieve own ip address
+    g = geocoder.ip('me')
+    # Check coordinate
+    print("Dynamic update the coordinate in format [latitude, longitude]: " + str(g.latlng))
+    # Optain the latitude, longitude
+    return g.latlng
 
 client = mqttclient.Client("Gateway_Thingsboard")
 client.username_pw_set(THINGS_BOARD_ACCESS_TOKEN)
@@ -48,14 +55,10 @@ client.on_message = recv_message
 temp = 30
 humi = 50
 light_intesity = 100
-#retrieve own ip address
-g = geocoder.ip('me')
-#Check coordinate
-print("Coordinate in format [latitude, longitude]: " + str(g.latlng))
-#Optain the latitude, longitude
-latitude,longitude = g.latlng
+
 counter = 0
 while True:
+    latitude, longitude = getLocation()
     collect_data = {'temperature': temp, 'humidity': humi, 'light': light_intesity,
                     'longitude': longitude,  'latitude': latitude}
     temp += 1
