@@ -3,7 +3,7 @@ print("Xin chào ThingsBoard")
 import paho.mqtt.client as mqttclient
 import time
 import json
-import geocoder         #Geocoding libary
+import geocoder         #Geocoder libary
 
 
 BROKER_ADDRESS = "demo.thingsboard.io"
@@ -35,7 +35,7 @@ def connected(client, usedata, flags, rc):
         print("Connection is failed")
 
 def getLocation():
-    # retrieve own ip address
+    # retrieve my own ip address
     g = geocoder.ip('me')
     # Check coordinate
     print("Dynamic update the coordinate in format [latitude, longitude]: " + str(g.latlng))
@@ -58,6 +58,7 @@ light_intesity = 100
 
 counter = 0
 while True:
+    #Dynamic update the coordinate
     latitude, longitude = getLocation()
     collect_data = {'temperature': temp, 'humidity': humi, 'light': light_intesity,
                     'longitude': longitude,  'latitude': latitude}
