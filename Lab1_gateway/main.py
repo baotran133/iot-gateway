@@ -4,8 +4,7 @@ import paho.mqtt.client as mqttclient
 import time
 import json
 import geocoder
-g = geocoder.ip('me')
-print(g.latlng)
+
 
 BROKER_ADDRESS = "demo.thingsboard.io"
 PORT = 1883
@@ -49,8 +48,10 @@ client.on_message = recv_message
 temp = 30
 humi = 50
 light_intesity = 100
-longitude = 106.7
-latitude = 10.6
+g = geocoder.ip('me')
+print(g.latlng)
+latitude,longitude = g.latlng
+
 counter = 0
 while True:
     collect_data = {'temperature': temp, 'humidity': humi, 'light':light_intesity,  'longitude':longitude,  'latitude':   latitude}
