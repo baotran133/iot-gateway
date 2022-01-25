@@ -1,4 +1,4 @@
 # iot-gateway
-Run these commands in terminal before running main:\
+Run these commands in terminal:\
 -pip install paho-mqtt\
 -pip install geocoder
