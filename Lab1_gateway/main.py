@@ -10,6 +10,8 @@ mess = ""
 bbc_port="COM5"
 if len(bbc_port)>0:
     ser=serial.Serial(port=bbc_port,baudrate=115200)
+
+
 def converse(name):
     swich={
         'HUMI':"humidity",
@@ -22,12 +24,13 @@ def processData(data):
     data = data.replace("!", "")
     data = data.replace("#", "")
     splitData = data.split(":")
-    print(splitData)
+
     #TODO
     id,name,value=splitData
     name=converse(name)
     collect_data={name:int(value)}
     client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+    print("Published: " + str(collect_data))
 def readSerial():
     bytesToread = ser.inWaiting()
     if (bytesToread>0):
@@ -60,17 +63,16 @@ def recv_message(client, userdata, message):
         if jsonobj['method'] == "setLED":
             temp_data['value'] = jsonobj['params']
             client.publish('v1/devices/me/LED', json.dumps(temp_data), 1)
-            cmd += "!4:LED:" + str(temp_data['value'])
-        if jsonobj['method'] == "setPump":
+            cmd += "!3:LED:" + str(temp_data['value'])
+        if jsonobj['method'] == "setFAN":
             temp_data['value'] = jsonobj['params']
-            client.publish('v1/devices/me/PUMP', json.dumps(temp_data), 1)
-            cmd += "!5:PUMP:" + str(temp_data['value'])
+            client.publish('v1/devices/me/FAN', json.dumps(temp_data), 1)
+            cmd += "!4:FAN:" + str(temp_data['value'])
     except:
         pass
 
     if len(bbc_port)>0:
         ser.write((str(cmd) + "#").encode())
-        print("msg control has been sent:" + cmd)
 
 def connected(client, usedata, flags, rc):
     if rc == 0:
@@ -84,6 +86,9 @@ def getLocation():
     g = geocoder.ip('me')
     # Optain the latitude, longitude
     return g.latlng
+
+cmd = ""
+
 
 client = mqttclient.Client("Gateway_Thingsboard")
 client.username_pw_set(THINGS_BOARD_ACCESS_TOKEN)
