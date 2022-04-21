@@ -14,7 +14,6 @@ if len(bbc_port)>0:
 
 def converse(name):
     swich={
-        'HUMI':"humidity",
         'TEMP':"temperature",
         'LIGHT':"light"
     }
@@ -57,17 +56,25 @@ def subscribed(client, userdata, mid, granted_qos):
 def recv_message(client, userdata, message):
     print("Received: ", message.payload.decode("utf-8"))
     temp_data = {'value': True}
-    cmd=""
+    cmd=0
     try:
         jsonobj = json.loads(message.payload)
         if jsonobj['method'] == "setLED":
             temp_data['value'] = jsonobj['params']
             client.publish('v1/devices/me/LED', json.dumps(temp_data), 1)
-            cmd += "!3:LED:" + str(temp_data['value'])
+            print(str(temp_data['value']))
+            if str(temp_data['value']) == "True":
+                cmd = 1
+            else:
+                cmd = 2
+
         if jsonobj['method'] == "setFAN":
             temp_data['value'] = jsonobj['params']
             client.publish('v1/devices/me/FAN', json.dumps(temp_data), 1)
-            cmd += "!4:FAN:" + str(temp_data['value'])
+            if str(temp_data['value']) == "True":
+                cmd = 3
+            else:
+                cmd = 4
     except:
         pass
 
@@ -109,12 +116,12 @@ while True:
     #Dynamic update the coordinate
     # latitude, longitude = getLocation()
     # collect_data = {'temperature': temp, 'humidity': humi, 'light': light_intesity,
-    #                 'longitude': longitude,  'latitude': latitude}
+    # #                 'longitude': longitude,  'latitude': latitude}
     # temp += 1
     # humi += 1
     # light_intesity += 1
     # client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
     # time.sleep(10)
     if (len(bbc_port) > 0):
-        readSerial()
+         readSerial()
     time.sleep(1)
