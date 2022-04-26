@@ -7,29 +7,28 @@ import geocoder         #Geocoder libary
 import serial.tools.list_ports
 
 mess = ""
-bbc_port="COM5"
+bbc_port="COM7"
 if len(bbc_port)>0:
     ser=serial.Serial(port=bbc_port,baudrate=115200)
 
 
-def converse(name):
-    swich={
-        'TEMP':"temperature",
-        'LIGHT':"light"
-    }
-    return swich.get(name)
+
 
 def processData(data):
     data = data.replace("!", "")
     data = data.replace("#", "")
     splitData = data.split(":")
-
+    print(splitData)
     #TODO
-    id,name,value=splitData
-    name=converse(name)
-    collect_data={name:int(value)}
-    client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
-    print("Published: " + str(collect_data))
+    if (len(splitData)==3):
+        id,name,value=splitData
+        if id == "1":
+            name="temperature"
+        elif id == "2":
+            name = "light"
+        collect_data={name:int(value)}
+        client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+        print("Published: " + str(collect_data))
 def readSerial():
     bytesToread = ser.inWaiting()
     if (bytesToread>0):
@@ -62,7 +61,6 @@ def recv_message(client, userdata, message):
         if jsonobj['method'] == "setLED":
             temp_data['value'] = jsonobj['params']
             client.publish('v1/devices/me/LED', json.dumps(temp_data), 1)
-            print(str(temp_data['value']))
             if str(temp_data['value']) == "True":
                 cmd = 1
             else:
