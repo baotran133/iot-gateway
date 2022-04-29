@@ -59,17 +59,17 @@ def recv_message(client, userdata, message):
     try:
         jsonobj = json.loads(message.payload)
         if jsonobj['method'] == "setLED":
-            temp_data['value'] = jsonobj['params']
-            client.publish('v1/devices/me/LED', json.dumps(temp_data), 1)
-            if str(temp_data['value']) == "True":
+            temp_data['valueLed'] = jsonobj['params']
+            client.publish('v1/devices/me/attributes', json.dumps(temp_data), 1)
+            if str(temp_data['valueLed']) == "True":
                 cmd = 1
             else:
                 cmd = 2
 
         if jsonobj['method'] == "setFAN":
-            temp_data['value'] = jsonobj['params']
-            client.publish('v1/devices/me/FAN', json.dumps(temp_data), 1)
-            if str(temp_data['value']) == "True":
+            temp_data['valueFan'] = jsonobj['params']
+            client.publish('v1/devices/me/attributes', json.dumps(temp_data), 1)
+            if str(temp_data['valueFan']) == "True":
                 cmd = 3
             else:
                 cmd = 4
