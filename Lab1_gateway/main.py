@@ -7,7 +7,7 @@ import geocoder         #Geocoder libary
 import serial.tools.list_ports
 
 mess = ""
-bbc_port="COM7"
+bbc_port="COM8"
 if len(bbc_port)>0:
     ser=serial.Serial(port=bbc_port,baudrate=115200)
 
