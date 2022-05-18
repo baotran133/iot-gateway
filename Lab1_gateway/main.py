@@ -22,9 +22,9 @@ def processData(data):
     #TODO
     if (len(splitData)==3):
         id,name,value=splitData
-        if id == "1":
+        if name == "TEMP":
             name="temperature"
-        elif id == "2":
+        elif name == "LIGHT":
             name = "light"
         collect_data={name:int(value)}
         client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
