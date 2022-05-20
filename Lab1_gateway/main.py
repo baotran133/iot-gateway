@@ -27,13 +27,19 @@ def processData(data):
         # elif id == "2":
         #     name = "light"
         # PHAN BIET DATA BANG NAME THAY VI SU DUNG ID NODE CHO PHU HOP LAB4
+        # collect_data = {name: int(value)}
+        # client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+        # print("Published: " + str(collect_data))
         if name == "TEMP":
             name = "temperature"
+            collect_data = {name: int(value)}
+            client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+            print("Published: " + str(collect_data))
         elif id == "LIGHT":
             name = "light"
-        collect_data={name:int(value)}
-        client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
-        print("Published: " + str(collect_data))
+            collect_data = {name: int(value)}
+            client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+            print("Published: " + str(collect_data))
 def readSerial():
     bytesToread = ser.inWaiting()
     if (bytesToread>0):
