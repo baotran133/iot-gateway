@@ -35,7 +35,7 @@ def processData(data):
             collect_data = {name: int(value)}
             client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
             print("Published: " + str(collect_data))
-        elif id == "LIGHT":
+        elif name == "LIGHT":
             name = "light"
             collect_data = {name: int(value)}
             client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
