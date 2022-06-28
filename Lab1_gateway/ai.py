@@ -33,13 +33,12 @@ def ai_detection():
 
     # run the inference
     prediction = model.predict(data)
-    rs_class=["White Mask", "Grey Mask", "UnMask"]
-    # max_value = max(prediction)
-    # max_i=prediction.index(max_value)
-    # print("Result: ", rs_class[max_i])
+    #prediction return the numpy ndarray which formatted:
+    #[[<White Mask accuracy> , <No Mask accuracy> , <Background accuracy>]]
 
-    print(prediction)
+    #List of corresponding class of trained model
     name = ["White Mask", "NoMask", "Background"]
+    #Find max value in numpy ndarray
     index = -1
     max_value = -1
     for i in range(0 , len( prediction [0]) ) :
@@ -47,8 +46,6 @@ def ai_detection():
             max_value = prediction[0][ i ]
             index = i
     return name[index],max_value
-    # print ("Ket Qua: ", name[index])
-    # print ("Chinh Xac: ", max_value )
+    #return Class which captured image belong to and the accuracy of that prediction
 
 
-    #print(prediction)

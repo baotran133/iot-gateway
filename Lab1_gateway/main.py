@@ -134,6 +134,7 @@ def getLocation():
     # retrieve my own ip address
     g = geocoder.ip('me')
     # Optain the latitude, longitude
+    print(g)
     return g.latlng
 
 
@@ -162,25 +163,25 @@ counter_cap = 0
 
 
 while True:
-      #Dynamic update the coordinate
-    # latitude, longitude = getLocation()
-    # collect_data = {'temperature': temp, 'humidity': humi, 'light': light_intesity,
-    #                 'longitude': longitude,  'latitude': latitude}
-    # temp += 1
-    # humi += 1
-    # light_intesity += 1
-    # client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
-    # client.on_subscribe
-    # # if (len(bbc_port) > 0):
-    # #      readSerial()
+    collect_data = {'temperature': temp, 'humidity': humi, 'light': light_intesity}
+    temp += 1
+    humi += 1
+    light_intesity += 1
+    client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+    client.on_subscribe
+    # if (len(bbc_port) > 0):
+    #      readSerial()
     counter_cap+=1
     if counter_cap>=5:
         counter_cap = 0
         capture_img()
+        #Extract
         rs,accuracy=ai_detection()
+        #print
         print("Ket qua:", str(rs))
         print("Do chinh xac:", str(accuracy))
+        #package
         ai_data={'result':str(rs) , 'accuracy': float(accuracy)*100}
+        #publish
         client.publish('v1/devices/me/telemetry', json.dumps(ai_data), 1)
-
     time.sleep(1)
