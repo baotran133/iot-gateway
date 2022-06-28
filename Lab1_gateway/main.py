@@ -5,13 +5,41 @@ import time
 import json
 import geocoder         #Geocoder libary
 import serial.tools.list_ports
+from ai import *
+import time
 
+timer_counter=0
+timer_flag=0
 mess = ""
-bbc_port="COM10"
+bbc_port=""
+serial_data_recv=0
+mqtt_data_recv=0
+ack={}
+data={}
 if len(bbc_port)>0:
     ser=serial.Serial(port=bbc_port,baudrate=115200)
 
-
+def sendData():
+    if data!={}:
+        client.publish('v1/devices/me/telemetry', json.dumps(data), 1)
+        print("Published: " + str(collect_data))
+def sendACK():
+    ack={'ACK':0}
+    client.publish('v1/devices/me/attributes', json.dumps(ack), 1)
+def setTimer(counter):
+    global timer_counter, timer_flag
+    timer_counter=counter
+    timer_flag=0
+def runTimer():
+    global timer_counter,timer_flag
+    if timer_counter>0:
+        timer_counter-=1
+        if timer_counter==0:
+            timer_flag=1
+def cancelTimer():
+    global timer_counter,timer_flag
+    timer_counter=0
+    timer_flag=0
 
 
 def processData(data):
@@ -33,26 +61,31 @@ def processData(data):
         if name == "TEMP":
             name = "temperature"
             collect_data = {name: int(value)}
-            client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
-            print("Published: " + str(collect_data))
+            return collect_data
+            # client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+            # print("Published: " + str(collect_data))
         elif name == "LIGHT":
             name = "light"
             collect_data = {name: int(value)}
-            client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
-            print("Published: " + str(collect_data))
+            return collect_data
+            # client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+            # print("Published: " + str(collect_data))
 def readSerial():
     bytesToread = ser.inWaiting()
     if (bytesToread>0):
-        global mess
+        global mess,data,serial_data_recv
+        serial_data_recv = 1
         mess = mess + ser.read(bytesToread).decode("UTF-8")
         while ("#" in mess) and ("!" in mess):
             start = mess.find("!")
             end = mess.find("#")
-            processData(mess[start:end + 1])
+            data=processData(mess[start:end + 1])
             if (end==len(mess)):
                 mess = ""
             else:
                 mess = mess[end+1:]
+
+
 
 BROKER_ADDRESS = "demo.thingsboard.io"
 PORT = 1883
@@ -103,6 +136,7 @@ def getLocation():
     # Optain the latitude, longitude
     return g.latlng
 
+
 cmd = ""
 
 
@@ -120,17 +154,33 @@ temp = 30
 humi = 50
 light_intesity = 100
 
-counter = 0
+counter_cap = 0
+
+
+
+
+
+
 while True:
-    #Dynamic update the coordinate
-    # latitude, longitude = getLocation()
-    # collect_data = {'temperature': temp, 'humidity': humi, 'light': light_intesity,
-    # #                 'longitude': longitude,  'latitude': latitude}
-    # temp += 1
-    # humi += 1
-    # light_intesity += 1
-    # client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
-    # time.sleep(10)
-    if (len(bbc_port) > 0):
-         readSerial()
+      #Dynamic update the coordinate
+    latitude, longitude = getLocation()
+    collect_data = {'temperature': temp, 'humidity': humi, 'light': light_intesity,
+                    'longitude': longitude,  'latitude': latitude}
+    temp += 1
+    humi += 1
+    light_intesity += 1
+    client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+    client.on_subscribe
+    # if (len(bbc_port) > 0):
+    #      readSerial()
+    counter_cap+=1
+    if counter_cap>=5:
+        counter_cap = 0
+        capture_img()
+        rs,accuracy=ai_detection()
+        print("Ket qua:", str(rs))
+        print("Do chinh xac:", str(accuracy))
+        ai_data={'result':str(rs) , 'accuracy': float(accuracy)*100}
+        client.publish('v1/devices/me/telemetry', json.dumps(ai_data), 1)
+
     time.sleep(1)

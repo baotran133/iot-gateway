@@ -33,24 +33,22 @@ def ai_detection():
 
     # run the inference
     prediction = model.predict(data)
-
+    rs_class=["White Mask", "Grey Mask", "UnMask"]
     # max_value = max(prediction)
     # max_i=prediction.index(max_value)
     # print("Result: ", rs_class[max_i])
 
-    print(len(prediction[0]))
-    name = ["White Mask", "Grey Mask", "UnMask"]
+    print(prediction)
+    name = ["White Mask", "NoMask", "Background"]
     index = -1
     max_value = -1
     for i in range(0 , len( prediction [0]) ) :
         if max_value < prediction[0][ i ]:
             max_value = prediction[0][ i ]
             index = i
-    print ("Ket Qua: ", name[index])
-    print ("Chinh Xac: ", max_value )
-while True:
-    capture_img()
-    ai_detection()
-    time.sleep(5)
+    return name[index],max_value
+    # print ("Ket Qua: ", name[index])
+    # print ("Chinh Xac: ", max_value )
+
 
     #print(prediction)
