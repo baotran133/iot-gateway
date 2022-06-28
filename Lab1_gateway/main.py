@@ -163,16 +163,16 @@ counter_cap = 0
 
 while True:
       #Dynamic update the coordinate
-    latitude, longitude = getLocation()
-    collect_data = {'temperature': temp, 'humidity': humi, 'light': light_intesity,
-                    'longitude': longitude,  'latitude': latitude}
-    temp += 1
-    humi += 1
-    light_intesity += 1
-    client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
-    client.on_subscribe
-    # if (len(bbc_port) > 0):
-    #      readSerial()
+    # latitude, longitude = getLocation()
+    # collect_data = {'temperature': temp, 'humidity': humi, 'light': light_intesity,
+    #                 'longitude': longitude,  'latitude': latitude}
+    # temp += 1
+    # humi += 1
+    # light_intesity += 1
+    # client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
+    # client.on_subscribe
+    # # if (len(bbc_port) > 0):
+    # #      readSerial()
     counter_cap+=1
     if counter_cap>=5:
         counter_cap = 0
